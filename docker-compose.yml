@@ -1,0 +1,31 @@
+version: '2'
+services:
+  tiafepetshop-app:
+    build:
+      context: .
+      dockerfile: app/infrastructure/docker/Dockerfile
+    image:  tiafepetshop-app/ tiafepetshop-app
+    ports:
+      - "4000:4000"
+      - "5858:5858"
+    links:
+      - mysql
+      - redis
+  mysql:
+    image: mysql:5.7.17
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docs/database/sql:/docker-entrypoint-initdb.d
+      - ./docs/database/mysql.cnf:/etc/mysql/conf.d/custom.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_DATABASE=mysql
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass tiafepetshop
+    ports:
+      - "6379:6379"
+  
